@@ -20,11 +20,11 @@ ENV POETRY_REQUESTS_TIMEOUT=15
 
 FROM base AS packages
 
-# if you located in China, you can use aliyun mirror to speed up
-# RUN sed -i 's@deb.debian.org@mirrors.aliyun.com@g' /etc/apt/sources.list.d/debian.sources
-
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends gcc g++ libc-dev libffi-dev libgmp-dev libmpfr-dev libmpc-dev
+# 修改 Debian 12 的新源文件位置
+RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list.d/debian.sources && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
+        gcc g++ libc-dev libffi-dev libgmp-dev libmpfr-dev libmpc-dev
 
 # Install Python dependencies
 COPY pyproject.toml poetry.lock ./
@@ -48,10 +48,10 @@ ENV TZ=UTC
 
 WORKDIR /app/api
 
-RUN \
-    apt-get update \
-    # Install dependencies
-    && apt-get install -y --no-install-recommends \
+# 同样修改源文件位置
+RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list.d/debian.sources && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
         # basic environment
         curl nodejs libgmp-dev libmpfr-dev libmpc-dev \
         # For Security
